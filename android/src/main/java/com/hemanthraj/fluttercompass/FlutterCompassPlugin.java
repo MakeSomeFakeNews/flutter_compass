@@ -323,12 +323,24 @@ public final class FlutterCompassPlugin implements FlutterPlugin, StreamHandler 
              * @return float filtered array of float
              */
             private float[] lowPassFilter(float[] newValues, float[] smoothedValues) {
-                if (smoothedValues == null) {
-                    return newValues;
+                // 如果输入为空，直接返回 null
+                if (newValues == null || newValues.length == 0) {
+                    return null;
                 }
+            
+                // 如果平滑值为空，或者长度不匹配，创建一个新的数组
+                if (smoothedValues == null || smoothedValues.length != newValues.length) {
+                    smoothedValues = new float[newValues.length];
+                    // 初始化为当前值（避免第一次结果为0）
+                    System.arraycopy(newValues, 0, smoothedValues, 0, newValues.length);
+                    return smoothedValues;
+                }
+            
+                // 应用低通滤波器
                 for (int i = 0; i < newValues.length; i++) {
                     smoothedValues[i] = smoothedValues[i] + ALPHA * (newValues[i] - smoothedValues[i]);
                 }
+            
                 return smoothedValues;
             }
 
